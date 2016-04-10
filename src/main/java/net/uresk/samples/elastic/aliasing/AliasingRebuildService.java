@@ -1,24 +1,21 @@
 package net.uresk.samples.elastic.aliasing;
 
 import java.io.InputStream;
-import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.io.IOUtils;
-import org.elasticsearch.action.admin.indices.alias.IndicesAliasesRequest;
 import org.elasticsearch.action.admin.indices.create.CreateIndexRequest;
 import org.elasticsearch.action.admin.indices.delete.DeleteIndexRequest;
 import org.elasticsearch.action.admin.indices.exists.indices.IndicesExistsRequest;
 import org.elasticsearch.action.admin.indices.mapping.put.PutMappingRequest;
 import org.elasticsearch.action.delete.DeleteRequest;
+import org.elasticsearch.action.index.IndexRequest.OpType;
 import org.elasticsearch.action.index.IndexRequestBuilder;
 import org.elasticsearch.action.index.IndexResponse;
 import org.elasticsearch.client.Client;
 import org.elasticsearch.client.Requests;
 import org.elasticsearch.cluster.metadata.AliasAction;
-import org.elasticsearch.cluster.metadata.AliasMetaData;
 import org.elasticsearch.cluster.metadata.AliasOrIndex;
-import org.elasticsearch.common.collect.ImmutableOpenMap;
 import org.elasticsearch.common.settings.Settings;
 
 public class AliasingRebuildService
@@ -123,7 +120,7 @@ public class AliasingRebuildService
 	{
 		synchronized (aliasName)
 		{
-			IndexRequestBuilder indexRequest = elasticClient.prepareIndex(LOCK_DIRECTORY, LOCK_TYPE, aliasName).setSource("{}");
+			IndexRequestBuilder indexRequest = elasticClient.prepareIndex(LOCK_DIRECTORY, LOCK_TYPE, aliasName).setSource("{}").setOpType(OpType.CREATE);
 			boolean successful = false;
 			
 			try
